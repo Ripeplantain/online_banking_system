@@ -15,10 +15,12 @@ struct user {
 
 int main()
 {
-    struct user user;
-    int option; 
+    struct user user,recepient;
+    int option,choice; 
     FILE *file;
     char filename[50],phone[50],passwrd[50];
+    char cont = 'y';
+    float amount;
 
     printf("\n Welcome to Cal Bank Services");
     printf("\n \n What do you want to do today?");
@@ -54,16 +56,112 @@ int main()
         scanf("%s", &phone);
         printf("\n Enter your password: \t");
         scanf("%s", &passwrd);
-        file = fopen(strcat(filename,".txt"), "r");
-        fread(&user,sizeof(struct user),1,file);
-        fclose(file);
-        printf("check to see if logged in");
-        if(!strcmp(passwrd,user.password))
-        {
-            printf("\n Password matched");
+        file = fopen(strcat(filename,".txt"),"w");
+        if (file == NULL){
+            printf("Account not registered.\n");
         } else {
-            printf("\n Invalid password");
+            fread(&user,sizeof(struct user),1,file);
+        fclose(file);
+        if(strcmp(passwrd,user.password)){
+            while(cont == 'y'){
+                system("clear");
+                printf("\n Press 1 to check balance");
+                printf("\n Press 2 to deposit amount");
+                printf("\n Press 3 to withdraw amount");
+                printf("\n Press 4 to transfer amount");
+                printf("\n Press 5 to change your password \n");
+
+                printf("\n Your choice: \t");
+                scanf("%d",&choice);
+
+                switch(choice){
+                    case 1:
+                        printf("\n Your balance is $ %2f",user.balance);
+                        break;
+                    case 2:
+                        printf("\n How much do you want to deposit?\t");
+                        scanf("%f",&amount);
+                        user.balance += amount;
+                        file = fopen(filename,"w");
+                        fwrite(&user,sizeof(struct user),1,file);
+                        if (fwrite != NULL){
+                             printf("\n Succesfully deposited");
+                             printf("\n You are balance is $%2f",user.balance);
+
+                        }
+                        fclose(file);
+                        break;
+                    case 3:
+                        printf("\n How much do you want to withdraw?\t");
+                        scanf("%f",&amount);
+                        user.balance -= amount;
+                        file = fopen(filename,"w");
+                        fwrite(&user,sizeof(struct user),1,file);
+                        if (fwrite != NULL) {
+                            printf("\n You have withdrawn $%2f",amount);
+                            printf("\n You are balance is $%2f",user.balance);
+                        }
+                        fclose(file);
+                        break; 
+                    case 4:
+                        printf("\n Please enter phone number of recipient:\t");
+                        scanf("%f",&phone);
+                        printf("\n Please enter amount you want to transfer:\t");
+                        scanf("%d",&amount);
+
+                        strcpy(filename,phone);
+                        file = fopen(strcat(filename,".txt"),"w");
+
+                        if(file == NULL){
+                            printf("\n Account is not registered");
+                        } else if(amount > user.balance){
+                            printf("\n Insufficient funds");
+                        } else {
+                           
+                            fread(&user,sizeof(struct user),1,file);
+                            fclose(file);
+                            file = fopen(strcat(filename,".txt"),"w");
+                            recepient.balance += amount;
+                            fwrite(&user,sizeof(struct user),1,file);
+                            fclose(file);
+
+                            if(fwrite != NULL){
+                                printf("\n You have transferred amount");
+                                strcpy(filename,user.phoneNumber);
+                                file = fopen(strcat(filename,".txt"),"w");
+                                user.balance -= amount;
+                                fwrite(&user,sizeof(struct user),1,file);
+                                fclose(file);
+                            }
+
+                        
+                        }
+                        break;
+
+                    case 5:
+                        printf("\n Enter your new password");
+                        scanf("%s",&passwrd);
+                        file = fopen(filename,"w");
+                        strcpy(user.password,passwrd);
+                        fwrite(&user,sizeof(struct user),1,file);
+                        if (fwrite != NULL){
+                            printf("\n Password has been changed successfully");
+                        }
+                        break;
+                        default:
+                            printf("\n Invalid option");
+                }
+
+                printf("\n Press do you wnat to continue transaction y/n \t");
+                scanf("%s", &cont);
+            }
+        } else {
+            printf("Wrong password");
         }
+        }
+
+
+        
     }
 
     return 0;
