@@ -15,7 +15,7 @@ struct user {
 
 int main()
 {
-    struct user user,recepient;
+    struct user user,user1;
     int option,choice; 
     FILE *file;
     char filename[50],phone[50],passwrd[50];
@@ -105,37 +105,33 @@ int main()
                         break; 
                     case 4:
                         printf("\n Please enter phone number of recipient:\t");
-                        scanf("%f",&phone);
+                        scanf("%s",&phone);
                         printf("\n Please enter amount you want to transfer:\t");
-                        scanf("%d",&amount);
-
+                        scanf("%f",&amount);
+                       
                         strcpy(filename,phone);
                         file = fopen(strcat(filename,".txt"),"w");
+                        if(file == NULL) printf("\n Phone number is not registered");      
 
-                        if(file == NULL){
-                            printf("\n Account is not registered");
-                        } else if(amount > user.balance){
-                            printf("\n Insufficient funds");
-                        } else {
-                           
-                            fread(&user,sizeof(struct user),1,file);
+                        else{   
+                            fread(&user1,sizeof(struct user),1,file);
+                        fclose(file);
+                        if(amount > user.balance) printf("/n Insufficient funds");
+                        else{
+                            file = fopen(filename,"w");
+                            user1.balance += amount;
+                            fwrite(&user1,sizeof(struct user),1,file);
                             fclose(file);
-                            file = fopen(strcat(filename,".txt"),"w");
-                            recepient.balance += amount;
-                            fwrite(&user,sizeof(struct user),1,file);
-                            fclose(file);
-
                             if(fwrite != NULL){
-                                printf("\n You have transferred amount");
+                                printf("\n You have successfully transfered $%2f to %s",amount,phone);
                                 strcpy(filename,user.phoneNumber);
-                                file = fopen(strcat(filename,".txt"),"w");
+                                fopen(strcat(filename,".txt"),"w");
                                 user.balance -= amount;
                                 fwrite(&user,sizeof(struct user),1,file);
                                 fclose(file);
-                            }
-
-                        
                         }
+                        }
+                        }                   
                         break;
 
                     case 5:
